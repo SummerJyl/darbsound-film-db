@@ -42,6 +42,8 @@ function initSearchWithFilter() {
   const closeSearchBtn = document.getElementById("closeSearch");
   const runSearchBtn = document.getElementById("runSearchBtn");
   const searchFilterSelect = document.getElementById("searchFilter");
+  console.log("✅ searchFilterSelect defined:", searchFilterSelect);
+  console.log("runSearchBtn:", runSearchBtn);
 
   // Open search modal
   searchBtn.addEventListener("click", () => {
@@ -64,24 +66,73 @@ function initSearchWithFilter() {
       searchResults.innerHTML = "";
     }
   });
+  // -----------------------------
+  // Open search modal
+  // -----------------------------
+  searchBtn.addEventListener("click", () => {
+    searchModal.style.display = "block";
+    searchInput.focus();
+  });
 
-  // Search as user types (debounced)
-  let searchTimeout;
-  searchInput.addEventListener("input", (e) => {
-    console.log("Input event fired, value:", e.target.value);
-    clearTimeout(searchTimeout);
-    const query = e.target.value.trim();
+  // -----------------------------
+  // Search listener for runSearchBtn
+  // -----------------------------
+  runSearchBtn.addEventListener("click", async (e) => {
+    console.log("🚨 BUTTON CLICKED!");
+    e.preventDefault();
+    e.stopPropagation();
 
-    if (query.length < 2) {
-      searchResults.innerHTML = "";
+    const query = searchInput.value.trim();
+    console.log("searchFilterSelect before use:", searchFilterSelect);
+    const filterType = searchFilterSelect.value;
+
+    console.log("SEARCH START:", query, filterType);
+    console.log("Raw query:", query, "Filter:", filterType);
+
+    if (!query) {
+      searchResults.innerHTML = "<p>Please enter a search term.</p>";
       return;
     }
 
-    searchTimeout = setTimeout(async () => {
-      const films = await searchFilms(query);
-      displaySearchResults(films);
-    }, 300); // Wait 300ms after user stops typing
+    // Use enhanced search instead of basic search
+    console.log("CALLING enhancedSearchWithFilter");
+    await enhancedSearchWithFilter(query, filterType);
+    console.log("SEARCH COMPLETE");
   });
+
+  // Enter key listener (SEPARATE, OUTSIDE!)
+  searchInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      runSearchBtn.click();
+    }
+  });
+
+  // -----------------------------
+  // Close modal
+  // -----------------------------
+  closeSearchBtn.addEventListener("click", () => {
+    console.log("Search modal CLOSED");
+    searchModal.style.display = "none";
+    searchInput.value = "";
+    searchResults.innerHTML = "";
+  });
+  // Search as user types (debounced)
+  //   let searchTimeout;
+  //   searchInput.addEventListener("input", (e) => {
+  //     console.log("Input event fired, value:", e.target.value);
+  //     clearTimeout(searchTimeout);
+  //     const query = e.target.value.trim();
+
+  //     if (query.length < 2) {
+  //       searchResults.innerHTML = "";
+  //       return;
+  //     }
+
+  //     searchTimeout = setTimeout(async () => {
+  //       const films = await searchFilms(query);
+  //       displaySearchResults(films);
+  //     }, 300); // Wait 300ms after user stops typing
+  //   });
 }
 
 /**
@@ -310,25 +361,29 @@ function displayTMDBResults(tmdbFilms) {
 
       if (!tmdbFilm) return;
 
-      // Disable button and show loading
-      e.currentTarget.disabled = true;
-      e.currentTarget.innerHTML =
-        '<ion-icon name="hourglass-outline"></ion-icon> Adding...';
+      try {
+        // Disable button and show loading
+        const btn = e.currentTarget;
+        btn.disabled = true;
+        btn.innerHTML =
+          '<ion-icon name="hourglass-outline"></ion-icon> Adding...';
 
-      const result = await addFilmToDatabase(tmdbFilm);
+        const result = await addFilmToDatabase(tmdbFilm);
 
-      if (result.success) {
-        e.currentTarget.innerHTML =
-          '<ion-icon name="checkmark-circle"></ion-icon> Added!';
-        e.currentTarget.style.background = "green";
+        if (result.success) {
+          btn.innerHTML =
+            '<ion-icon name="checkmark-circle"></ion-icon> Added!';
+          btn.style.background = "green";
 
-        // Show success message
-        alert(`✅ "${tmdbFilm.title}" has been added to your database!`);
-      } else {
-        e.currentTarget.innerHTML =
-          '<ion-icon name="close-circle"></ion-icon> Error';
-        e.currentTarget.style.background = "red";
-        alert(`❌ Error: ${result.error}`);
+          // Show success message
+          alert(`✅ "${tmdbFilm.title}" has been added to your database!`);
+        } else {
+          btn.innerHTML = '<ion-icon name="close-circle"></ion-icon> Error';
+          btn.style.background = "red";
+          alert(`❌ Error: ${result.error}`);
+        }
+      } catch (error) {
+        console.error("Add button error:", error);
       }
     });
   });
@@ -337,20 +392,30 @@ function displayTMDBResults(tmdbFilms) {
 /**
  * Enhanced search that checks both DB and TMDB
  */
-async function enhancedSearch(query) {
+async function enhancedSearchWithFilter(query, filterType = "title") {
   const searchResults = document.getElementById("searchResults");
 
-  // First, search local database
-  const { data, error } = await supabaseClient
+  // Build query based on filter type
+  let dbQuery = supabaseClient
     .from("films")
     .select("*")
-    .ilike("title", `%${query}%`)
     .order("year", { ascending: false })
     .limit(50);
 
-  if (error) {
-    console.error("Database search error:", error);
+  // Apply filter based on selection
+  switch (filterType) {
+    case "title":
+      dbQuery = dbQuery.ilike("title", `%${query}%`);
+      break;
+    case "director":
+      dbQuery = dbQuery.ilike("director", `%${query}%`);
+      break;
+    case "genre":
+      dbQuery = dbQuery.ilike("category", `%${query}%`);
+      break;
   }
+
+  const { data, error } = await dbQuery;
 
   // Display database results
   if (data && data.length > 0) {
@@ -481,19 +546,26 @@ searchBtn.addEventListener("click", () => {
 // Search listener for runSearchBtn
 // -----------------------------
 runSearchBtn.addEventListener("click", async (e) => {
+  console.log("🚨 BUTTON CLICKED!");
   e.preventDefault();
+  e.stopPropagation();
+
   const query = searchInput.value.trim();
+  console.log("searchFilterSelect before use:", searchFilterSelect);
   const filterType = searchFilterSelect.value;
+
+  console.log("SEARCH START:", query, filterType);
   console.log("Raw query:", query, "Filter:", filterType);
 
   if (!query) {
-    searchResults.innerHTML =
-      '<p style="color:white;text-align:center;padding:2rem;">Please enter a search term.</p>';
+    searchResults.innerHTML = "<p>Please enter a search term.</p>";
     return;
   }
 
   // Use enhanced search instead of basic search
+  console.log("CALLING enhancedSearchWithFilter");
   await enhancedSearchWithFilter(query, filterType);
+  console.log("SEARCH COMPLETE");
 });
 
 // Enter key listener (SEPARATE, OUTSIDE!)

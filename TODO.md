@@ -5,7 +5,7 @@ Transfer all films, images, etc. Jeff has added to his FTP database to film site
 
 Create layout for film page
 
-🔌 Part 1: Bringing Your FileMaker Pro Database into VS Code
+🔌 Part 1: Bringing FileMaker Pro Database into VS Code
 👣 Your Options:
 You can't directly “import” a live FileMaker Pro database into VS Code, but you can connect to or export from it. Here are three realistic paths:
 
