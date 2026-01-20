@@ -488,10 +488,6 @@ body.active { overflow: hidden; }
   pointer-events: all;
 }
 
-
-
-
-
 /*-----------------------------------*\
  * #HERO
 \*-----------------------------------*/
@@ -587,7 +583,14 @@ body.active { overflow: hidden; }
   list-style: none;
   padding: 0;
 }
-
+.search-filter {
+  padding: 1rem;
+  background: var(--rich-black-fogra-29);
+  border: 2px solid var(--white-alpha-20);
+  border-radius: 8px;
+  color: var(--white);
+  font-size: 1rem;
+}
 
 /*-----------------------------------*\
  * #UPCOMING
@@ -629,10 +632,6 @@ body.active { overflow: hidden; }
   scroll-snap-align: start;
 }
 
-
-
-
-<!--
 /*-----------------------------------*\
  * #SERVICE
 \*-----------------------------------*/

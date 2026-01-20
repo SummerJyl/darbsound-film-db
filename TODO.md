@@ -128,9 +128,7 @@ Your project folders: /css, /js, /data
 
 🔥 Optional (for JSON/data use)
 Node.js (to run local servers, automate tasks later)
-
 Express (if building a backend API later)
-
 Git + GitHub (for version control)
 
 ---
@@ -180,3 +178,21 @@ _Last updated: [07182025]_
 
 01-18-2025
 Enable search by Director, Genre
+
+<!-- *********************************
+
+1. Work Locally, Stay Live
+When you click "Go Live" in VS Code now, your local site is talking to the real Supabase database.
+Safe Testing: You can see all the films the client adds while you're still designing the layout.
+Danger Zone: Be careful—if you delete a film while testing your "Delete" button locally, it will disappear from his live database too.
+2. Layout Enhancements to Consider
+Since you're in "enhancement mode," here are three quick wins for a film DB:
+Sorting: Add a dropdown to sort by "Year" or "Alphabetical."
+Image Gallery: If you aren't already, try pulling movie posters using the OMDb API—it makes the database look high-end.
+Filter Chips: Buttons for "Sci-Fi," "Horror," or "Comedy" so the client doesn't always have to type in the search bar.
+3. The "Update" Ritual
+Every time you finish a new layout feature (like a new CSS style or a better search bar):
+Open your project folder.
+Go to the Netlify Deploys tab.
+Drag and Drop the folder into that "Production" box.
+Refresh: The client will see the new design immediately when they refresh their browser. -->

@@ -34,12 +34,14 @@ async function fetchFilms(limit = 20, offset = 0) {
 /**
  * Search functionality
  */
-function initSearch() {
+function initSearchWithFilter() {
   const searchBtn = document.querySelector(".search-btn");
   const searchModal = document.getElementById("searchModal");
   const searchInput = document.getElementById("searchInput");
   const searchResults = document.getElementById("searchResults");
   const closeSearchBtn = document.getElementById("closeSearch");
+  const runSearchBtn = document.getElementById("runSearchBtn");
+  const searchFilterSelect = document.getElementById("searchFilter");
 
   // Open search modal
   searchBtn.addEventListener("click", () => {
@@ -456,63 +458,62 @@ function normalize(str) {
 /**
  * Initialize search functionality
  */
-function initSearch() {
-  console.log("initSearch called");
+// function initSearchWithFilter() {
+//   console.log("initSearch called");
 
-  // Get elements
-  const searchBtn = document.querySelector(".search-btn");
-  const searchModal = document.getElementById("searchModal");
-  const searchInput = document.getElementById("searchInput");
-  const searchResults = document.getElementById("searchResults");
-  const closeSearchBtn = document.getElementById("closeSearch");
-  const runSearchBtn = document.getElementById("runSearchBtn");
+// Get elements
+const searchBtn = document.querySelector(".search-btn");
+const searchModal = document.getElementById("searchModal");
+const searchInput = document.getElementById("searchInput");
+const searchResults = document.getElementById("searchResults");
+const closeSearchBtn = document.getElementById("closeSearch");
+const runSearchBtn = document.getElementById("runSearchBtn");
 
-  // -----------------------------
-  // Open search modal
-  // -----------------------------
-  searchBtn.addEventListener("click", () => {
-    searchModal.style.display = "block";
-    searchInput.focus();
-  });
+// -----------------------------
+// Open search modal
+// -----------------------------
+searchBtn.addEventListener("click", () => {
+  searchModal.style.display = "block";
+  searchInput.focus();
+});
 
-  // -----------------------------
-  // Search listener for runSearchBtn
-  // -----------------------------
-  runSearchBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
-    const query = searchInput.value.trim();
-    console.log("Raw query:", query);
+// -----------------------------
+// Search listener for runSearchBtn
+// -----------------------------
+runSearchBtn.addEventListener("click", async (e) => {
+  e.preventDefault();
+  const query = searchInput.value.trim();
+  const filterType = searchFilterSelect.value;
+  console.log("Raw query:", query, "Filter:", filterType);
 
-    if (!query) {
-      searchResults.innerHTML =
-        '<p style="color:white;text-align:center;padding:2rem;">Please enter a search term.</p>';
-      return;
-    }
+  if (!query) {
+    searchResults.innerHTML =
+      '<p style="color:white;text-align:center;padding:2rem;">Please enter a search term.</p>';
+    return;
+  }
 
-    // Use enhanced search instead of basic search
-    await enhancedSearch(query);
-  });
+  // Use enhanced search instead of basic search
+  await enhancedSearchWithFilter(query, filterType);
+});
 
+// Enter key listener (SEPARATE, OUTSIDE!)
+searchInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    runSearchBtn.click();
+  }
+});
 
-  // Enter key listener (SEPARATE, OUTSIDE!)
-  searchInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-      runSearchBtn.click();
-    }
-  });
-
-  // -----------------------------
-  // Close modal
-  // -----------------------------
-  closeSearchBtn.addEventListener("click", () => {
-    console.log("Search modal CLOSED");
-    searchModal.style.display = "none";
-    searchInput.value = "";
-    searchResults.innerHTML = "";
-  });
-}
+// -----------------------------
+// Close modal
+// -----------------------------
+closeSearchBtn.addEventListener("click", () => {
+  console.log("Search modal CLOSED");
+  searchModal.style.display = "none";
+  searchInput.value = "";
+  searchResults.innerHTML = "";
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   initHomepage();
-  initSearch();
+  initSearchWithFilter();
 });
