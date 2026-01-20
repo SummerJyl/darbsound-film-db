@@ -371,9 +371,47 @@ body.active { overflow: hidden; }
               inset 0 -1px 0 var(--black);
 }
 
+/* Make all movie card text white and clickable */
+.movie-card a {
+  color: var(--white) !important;
+  text-decoration: none !important;
+  display: block;
+}
 
+.movie-card a:hover {
+  color: var(--white) !important;
+}
 
+.movie-card .title {
+  color: var(--white) !important;
+  font-size: var(--fs-7);
+  margin-bottom: 10px;
+}
 
+.movie-card .meta-list {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.movie-card .meta-item {
+  color: var(--white) !important;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.movie-card .meta-item ion-icon {
+  color: var(--citrine);
+}
+
+.movie-card .span {
+  color: var(--white) !important;
+}
+
+.movie-card .card-badge {
+  color: var(--citrine) !important;
+}
 
 /*-----------------------------------*\
  * #HEADER
@@ -786,10 +824,6 @@ body.active { overflow: hidden; }
 .top-rated .filter-btn:focus::before { left: 0; }
 
 .top-rated .filter-btn:focus::after { right: 0; }
-
-
-
-
 
 /*-----------------------------------*\
  * #TV SEREIS

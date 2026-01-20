@@ -206,12 +206,13 @@ function renderFilmCard(film) {
   const posterUrl = film.poster_url || "../Images/no-poster.jpeg";
   const rating = film.rating ? film.rating.toFixed(1) : "N/A";
   const year = film.year || "Unknown";
+  const imdblink = film.imdb_link || "#"; // If IMDB link available
 
   return `
     <li>
       <div class="movie-card">
         <figure class="poster-box card-banner">
-          <img src="${posterUrl}" alt="${film.title}" class="img-cover" loading="lazy" onerror="this.src='../Images/no-poster.jpeg>
+          <img src="${posterUrl}" alt="${film.title}" class="img-cover" loading="lazy" onerror="this.src='../Images/no-poster.jpeg'">
         </figure>
         <h4 class="title">${film.title}</h4>
         <div class="meta-list">
@@ -221,8 +222,8 @@ function renderFilmCard(film) {
           </div>
           <div class="meta-item card-badge">${year}</div>
         </div>
-        <a href="./movie-details.html?id=${film.id}" class="card-btn" title="View Details">
-          <ion-icon name="play-circle-outline"></ion-icon>
+        <a href="${imdblink}" target="_blank" class="card-btn" title="View on IMDB">
+          <ion-icon name="link-outline"></ion-icon>
         </a>
       </div>
     </li>
@@ -491,6 +492,29 @@ async function initHomepage() {
 }
 
 /**
+ * Fetch and display top-rated films
+ */
+async function loadTopRatedFilms() {
+  try {
+    const { data, error } = await supabaseClient
+      .from("films")
+      .select("*")
+      .not("rating", "is", null)
+      .order("rating", { ascending: false })
+      .limit(10);
+
+    if (error) throw error;
+
+    // Render to Top Rated container
+    const container = document.getElementById("top-rated-list");
+    if (container && data) {
+      container.innerHTML = data.map((film) => renderFilmCard(film)).join("");
+    }
+  } catch (error) {
+    console.error("Error loading top rated films:", error);
+  }
+}
+/**
  * Update hero section with featured film
  */
 function updateHeroSection(film) {
@@ -587,5 +611,6 @@ closeSearchBtn.addEventListener("click", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   initHomepage();
+  loadTopRatedFilms();
   initSearchWithFilter();
 });
