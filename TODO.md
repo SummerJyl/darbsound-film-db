@@ -73,13 +73,9 @@ Filter bar (optional): by Genre, Year, Rating, Format
 
 🎞️ Grid of Cards
 Each film gets a “card” with:
-
 Poster image
-
 Title
-
 Blu-Ray | Genre | Year | Length | Rating
-
 Hover effect: blur, scale, or button: "Details" or "Watch"
 
 💡 Sample HTML Structure
@@ -184,6 +180,8 @@ Git + GitHub (for version control)
 _Last updated: [07182025]_
 
 01-18-2025
+Using Supabase for data management
+Integrates film data from TMDB
 Enable search by Director, Genre
 
 <!-- *********************************
