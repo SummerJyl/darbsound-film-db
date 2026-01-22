@@ -1,5 +1,12 @@
 ## To do
 
+1/20/2025
+Check Supabase for:
+✅ Films that do not have a genre
+✅ Can we pull any/all films that have C.(comments column), director, year, title, record #?
+
+DarbSound | Film
+Add functionality to add/remove C. to film \*denotes whether it's been watched
 Add Review and Podcast blog style layouts
 Transfer all films, images, etc. Jeff has added to his FTP database to film site
 

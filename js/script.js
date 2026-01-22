@@ -181,20 +181,16 @@ async function searchFilms(query) {
  */
 async function getFeaturedFilm() {
   try {
-    // Get a random film with poster
     const { data, error } = await supabaseClient
       .from("films")
       .select("*")
-      .not("poster_url", "is", null)
-      .not("rating", "is", null)
-      .limit(100); // Get 100 films
+      .eq("imdb_link", "https://www.imdb.com/title/tt0076786/")
+      .single();
 
     if (error) throw error;
-
-    // Return random film from the 100
-    return data[Math.floor(Math.random() * data.length)];
+    return data;
   } catch (error) {
-    console.error("Error fetching featured film:", error);
+    console.error("Error fetching Suspiria:", error);
     return null;
   }
 }
@@ -500,6 +496,7 @@ async function loadTopRatedFilms() {
       .from("films")
       .select("*")
       .not("rating", "is", null)
+      .order("rating", { ascending: false })
       .order("rating", { ascending: false })
       .limit(10);
 
